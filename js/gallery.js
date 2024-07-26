@@ -64,13 +64,45 @@ const images = [
   },
 ];
 
-/*<li class="gallery-item">
-  <a class="gallery-link" href="large-image.jpg">
+const galleryList = document.querySelector('.gallery');
+
+const createPicturesItem = images => {
+  return `<li class="gallery-item" data-id="${images.description}">
+  <a class="gallery-link" href="${images.original}">
     <img
       class="gallery-image"
-      src="small-image.jpg"
+      src="${images.preview}"
       data-source="large-image.jpg"
-      alt="Image description"
+      alt="${images.description}"
     />
   </a>
-</li>*/
+</li>`;
+};
+
+const unpackImages = images
+  .map(imageInfo => createPicturesItem(imageInfo))
+  .join('');
+
+galleryList.innerHTML = unpackImages;
+
+galleryList.addEventListener('click', addPicturesItem);
+
+function addPicturesItem(event) {
+  event.preventDefault();
+  if (event.target === event.currentTarget) {
+    return;
+  }
+
+  const targetItem = event.target.closest('.gallery-item');
+
+  const targetListen = targetItem.dataset.id;
+
+  const targetFindItem = images.find(
+    image => image.description === targetListen
+  );
+
+  const modalCreate = basicLightbox.create(
+    `<div class="modal"><img src="${targetFindItem.original}" alt="${targetFindItem.description}" width="1112" height="640"></div>`
+  );
+  modalCreate.show();
+}
